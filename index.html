@@ -3,440 +3,668 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Playbook-P3-TM13</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    </head>
+    <title>El Museo de la Originalidad: Curador de Legado</title>
+    <style>
+        :root {
+            --wood-dark: #3e2723;
+            --wood-light: #5d4037;
+            --gold: #ffd700;
+            --gold-shadow: #b8860b;
+            --paper: #fdfbf7;
+            --ink-red: #d32f2f;
+            --ink-green: #388e3c;
+            --ink-blue: #1976d2;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Georgia', serif;
+            background-color: var(--wood-dark);
+            background-image: repeating-linear-gradient(45deg, 
+                rgba(0,0,0,0.05) 0px, 
+                rgba(0,0,0,0.05) 2px, 
+                transparent 2px, 
+                transparent 4px),
+                linear-gradient(to bottom, #5d4037, #3e2723);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: #333;
+        }
+
+        /* --- LAYOUT PRINCIPAL (ESCRITORIO) --- */
+        #game-container {
+            width: 95%;
+            max-width: 1200px;
+            height: 90vh;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            grid-template-rows: 1fr 150px;
+            gap: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* --- ZONA 1: OBRA DE ARTE --- */
+        .art-zone {
+            grid-column: 1;
+            grid-row: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .frame {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 3/4;
+            border: 20px solid var(--gold);
+            border-image: linear-gradient(to bottom right, #ffd700, #b8860b, #ffd700, #8a6e03) 1;
+            box-shadow: 
+                inset 0 0 50px rgba(0,0,0,0.8),
+                10px 10px 30px rgba(0,0,0,0.5);
+            background: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .canvas {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-size: 5rem;
+            text-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            transition: all 0.5s ease;
+        }
+        
+        /* Estilos dinámicos para las obras */
+        .art-mars { background: linear-gradient(to top, #0f2027, #203a43, #2c5364); }
+        .art-mona { background: linear-gradient(180deg, #4b3621, #2f1e0e); }
+        .art-dino { background: radial-gradient(circle at center, #1a0b2e, #000000); }
+        .art-robot { background: linear-gradient(to bottom, #bdc3c7, #2c3e50); }
+        .art-scream { background: linear-gradient(45deg, #ff9966, #ff5e62); }
+        .art-final { background: #222; color: var(--gold); }
+
+        .plaque {
+            background: linear-gradient(to right, #b8860b, #ffd700, #b8860b);
+            padding: 10px 20px;
+            margin-top: 15px;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            font-weight: bold;
+            color: #2c1e0f;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        /* Sello Overlay (El resultado visual en el cuadro) */
+        .stamp-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(2) rotate(-15deg);
+            font-size: 3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            border: 10px solid currentColor;
+            padding: 10px 20px;
+            border-radius: 10px;
+            opacity: 0;
+            pointer-events: none;
+            mix-blend-mode: multiply;
+            z-index: 10;
+        }
+        
+        .stamp-anim {
+            animation: stamp-slam 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes stamp-slam {
+            0% { transform: translate(-50%, -50%) scale(3) rotate(-15deg); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1) rotate(-15deg); opacity: 0.8; }
+        }
+
+        /* --- ZONA 2: HERRAMIENTAS --- */
+        .tools-zone {
+            grid-column: 2;
+            grid-row: 1;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .score-board {
+            background: #212121;
+            color: var(--gold);
+            padding: 10px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            border: 2px solid #555;
+            border-radius: 4px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+        }
+
+        .report-screen {
+            flex-grow: 1;
+            background-color: var(--paper);
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+            font-family: 'Courier New', monospace;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            position: relative;
+        }
+
+        .report-screen::before {
+            content: "INFORME DEL CURADOR";
+            display: block;
+            border-bottom: 2px dashed #999;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .tool-btn {
+            background: #e0e0e0;
+            border: none;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #999;
+            transition: transform 0.1s, box-shadow 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .tool-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #999;
+        }
+
+        .tool-btn:hover { background: #fff; }
+
+        /* --- ZONA 3: DECISIÓN (SELLOS) --- */
+        .decision-zone {
+            grid-column: 1 / span 2;
+            grid-row: 2;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .stamp-btn {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4), inset 0 5px 10px rgba(255,255,255,0.2);
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .stamp-btn:hover { transform: scale(1.05); }
+        .stamp-btn:active { transform: scale(0.95); }
+
+        .stamp-accept { background: radial-gradient(circle at 30% 30%, #4caf50, #2e7d32); border: 4px solid #1b5e20; }
+        .stamp-auth { background: radial-gradient(circle at 30% 30%, #2196f3, #1565c0); border: 4px solid #0d47a1; }
+        .stamp-reject { background: radial-gradient(circle at 30% 30%, #f44336, #c62828); border: 4px solid #b71c1c; }
+
+        /* --- BOTÓN REINICIAR Y FINAL --- */
+        .restart-btn {
+            width: 100%;
+            background: #333;
+            color: white;
+            padding: 15px;
+            border: 2px solid var(--gold);
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .restart-btn:hover { background: #555; }
+
+        /* --- MODALES Y FEEDBACK --- */
+        .feedback-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 100;
+            color: white;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .director-msg {
+            background: var(--paper);
+            color: #333;
+            padding: 30px;
+            max-width: 500px;
+            border-radius: 5px;
+            box-shadow: 0 0 50px white;
+            border: 2px solid #333;
+        }
+
+        .director-face { font-size: 3rem; margin-bottom: 10px; }
+        
+        .next-btn {
+            margin-top: 20px;
+            padding: 15px 30px;
+            background: var(--gold);
+            border: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .hidden { display: none !important; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #game-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+                height: auto;
+                overflow-y: auto;
+            }
+            .art-zone, .tools-zone, .decision-zone { grid-column: 1; grid-row: auto; }
+            .decision-zone { gap: 10px; }
+            .stamp-btn { width: 90px; height: 90px; font-size: 0.7rem; }
+        }
+    </style>
+</head>
 <body>
-    <header>
-        <h1><span class="book-icon">📋</span> <strong>Playbook: Misión 13 - 3ero de Primaria</strong></h1>
-        <div class="header-widgets">
-            <div class="timer-container">
-                <span id="global-timer">⏱️ 40:00</span>
-                <button id="global-start-stop">Start</button>
-                <button id="global-reset">Reset</button>
+
+    <div id="game-container">
+        <!-- ZONA OBRA -->
+        <div class="art-zone">
+            <div class="frame">
+                <div id="canvas-content" class="canvas art-mars">
+                    <!-- Contenido inyectado por JS -->
+                    <div>🪐</div>
+                    <div style="font-size: 3rem;">🌀 ✨</div>
+                </div>
+                <div id="stamp-result" class="stamp-overlay">APROBADO</div>
             </div>
-            <div class="theme-toggle">
-                <i class="fas fa-sun"></i>
-                <label class="switch">
-                    <input type="checkbox" id="theme-toggle-input">
-                    <span class="slider round"></span>
-                </label>
-                <i class="fas fa-moon"></i>
+            <div id="art-title" class="plaque">Cargando Obra...</div>
+        </div>
+
+        <!-- ZONA HERRAMIENTAS -->
+        <div class="tools-zone">
+            <div class="score-board">
+                PUNTUACIÓN: <span id="score-display">0</span>
+            </div>
+
+            <div id="report-panel" class="report-screen">
+                <p>Bienvenido, Curador.</p>
+                <p>Seleccione una obra y utilice las herramientas para analizar su autenticidad.</p>
+                <p><em>Esperando análisis...</em></p>
+            </div>
+            
+            <div id="tool-buttons">
+                <button class="tool-btn" onclick="useTool('compare')">
+                    <span>🔍</span> Comparar Estilo
+                </button>
+                <div style="height:10px"></div>
+                <button class="tool-btn" onclick="useTool('signature')">
+                    <span>✍️</span> Analizar Firma
+                </button>
+                <div style="height:10px"></div>
+                <button class="tool-btn" onclick="useTool('permission')">
+                    <span>📜</span> Verificar Licencia
+                </button>
             </div>
         </div>
-    </header>
-    <div class="main-container">
-        <aside class="activity-list">
-            <h2>Actividades</h2>
-            <ul>
-                <li><a href="#activity-0" onclick="showActivity(0)">📝</a></li>
-                <li><a href="#activity-1" onclick="showActivity(1)">1</a></li>
-                <li><a href="#activity-2" onclick="showActivity(2)">2</a></li>
-                <li><a href="#activity-3" onclick="showActivity(3)">3</a></li>
-                <li><a href="#activity-4" onclick="showActivity(4)">4</a></li>
-                <li><a href="#activity-5" onclick="showActivity(5)">5</a></li>
-            </ul>
-        </aside>
-        <main class="content">
-            <div class="progress-bar">
-                <div class="progress" id="main-progress"></div>
-            </div>
-            <!-- ACTIVIDAD 0: DE UN VISTAZO -->
-            <div class="activity-card active" id="activity-0">
-                <h2><span class="book-icon">📝</span> De un Vistazo: Comando Central</h2>
-                <p class="overview-subtitle">Todo lo que necesitas para preparar y ejecutar esta misión en minutos.</p>
-                
-                <div class="command-section">
-                    <h3>🎯 Objetivo de Aprendizaje</h3>
-                    <div class="objective-box">
-                        <p><strong>Los estudiantes podrán:</strong> usar el Micro:Bit y Create A.I. para entrenar sonidos personalizados y usar bloques de condición para generar respuestas creativas, comprendiendo la diferencia entre reconocimiento de patrones y comprensión real.</p>
-                    </div>
-                </div>
-                <div class="command-section xolo-prompt">
-                    <h3>🤖 Prompt de Referencia para XOLO (Solo para Maestro)</h3>
-                    <div class="prompt-box">
-                        <div class="prompt-header">
-                            <span class="prompt-label">⚠️ NOTA: XOLO ya conoce el tema de esta misión. Este prompt es SOLO de referencia en caso de emergencia técnica:</span>
-                            <button class="copy-btn" onclick="copyPrompt('main-prompt')">
-                                <i class="fas fa-copy"></i> Copiar
-                            </button>
-                        </div>
-                        <pre id="main-prompt">Explícame cómo Create A.I. puede “aprender” un sonido personalizado y por qué necesita ejemplos claros para reconocerlo. Guíame para entrenar 1–2 sonidos (ej. aplauso, silbido) y para entender cómo se usa el bloque “SI CreateAI RECONOCE MI_SONIDO”. Conecta esto con asistentes de voz: ellos también aprenden patrones, pero no entienden intención.</pre>
-                    </div>
-                </div>
-                <div class="command-section">
-                    <h3>⚡ Puntos Esenciales de la Misión</h3>
-                    <div class="essentials-grid">
-                        <div class="essential-card">
-                            <div class="essential-icon">🎓</div>
-                            <h4>Concepto Clave</h4>
-                            <p>Reconocimiento de patrones: Es cuando una máquina aprende a identificar sonidos específicos (como un aplauso) buscando formas repetidas, igual que tú reconoces una canción por su ritmo sin necesidad de leer la letra.</p>
-                        </div>
-                        <div class="essential-card">
-                            <div class="essential-icon">🔧</div>
-                            <h4>Habilidad Técnica</h4>
-                            <p>Usar la herramienta Create A.I. para enseñar al micro:bit a identificar sonidos como aplausos o silbidos.</p>
-                        </div>
-                        <div class="essential-card">
-                            <div class="essential-icon">🧪</div>
-                            <h4>Experimentación</h4>
-                            <p>Probar con diferentes intensidades de sonido y ruidos de fondo para entender las limitaciones del reconocimiento.</p>
-                        </div>
-                        <div class="essential-card">
-                            <div class="essential-icon">💬</div>
-                            <h4>Interacción con XOLO</h4>
-                            <p>XOLO ya conoce a cada estudiante y el tema de hoy. Solo abren el chat y comienzan a aprender. Tú guías el timing y motivación.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="command-section">
-                    <h3>📦 Checklist de Materiales</h3>
-                    <div class="materials-checklist">
-                        <label><input type="checkbox"> Proyector/pantalla + presentación (5 diapositivas)</label>
-                        <label><input type="checkbox"> Internet estable + Gnius Space con XOLO activo</label>
-                        <label><input type="checkbox"> Micro:bit (1 por cada 2 estudiantes)</label>
-                        <label><input type="checkbox"> Acceso a MakeCode (https://makecode.microbit.org/) con extensión Create A.I. instalada</label>
-                        <label><input type="checkbox"> Acceso a Create A.I. (https://createai.microbit.org/)</label>
-                        <label><input type="checkbox"> ⚠️ Esta misión usa programación con BLOQUES en MakeCode</label>
-                        <label><input type="checkbox"> 📋 Para agregar extensión: En MakeCode → Extensiones → Buscar 'Create AI' → Agregar</label>
-                    </div>
-                    <p class="care-reminder"><strong>🛡️ Cuidado del equipo:</strong> Manipular el micro:bit con cuidado, no doblarlo, verificar que la batería esté conectada y desconectarlo suavemente al terminar.</p>
-                </div>
-                <div class="command-section">
-                    <h3>🗓️ Secuencia de la Misión (40 min)</h3>
-                    <div class="timeline">
-                        <div class="timeline-item">
-                            <div class="timeline-dot">1</div>
-                            <div class="timeline-content">
-                                <strong>Intro a la Misión</strong>
-                                <span class="time-badge">2 min</span>
-                                <p>Bienvenida, I Can Statement y contexto de la misión.</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-dot">2</div>
-                            <div class="timeline-content">
-                                <strong>A.I. Gym</strong>
-                                <span class="time-badge">8 min</span>
-                                <p>Los estudiantes abren el chat con XOLO y aprenden sobre el reconocimiento de patrones sonoros (sin prompt específico).</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-dot">3</div>
-                            <div class="timeline-content">
-                                <strong>Brain Spark</strong>
-                                <span class="time-badge">20 min</span>
-                                <p>Idear, construir y experimentar un programa con XOLO.</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-dot">4</div>
-                            <div class="timeline-content">
-                                <strong>Gnius STORM - Compartir</strong>
-                                <span class="time-badge">5 min</span>
-                                <p>Demostración y reflexión en parejas.</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-dot">5</div>
-                            <div class="timeline-content">
-                                <strong>Entrega de Evidencias</strong>
-                                <span class="time-badge">5 min</span>
-                                <p>Subir capturas a Gnius Space y finalizar misión.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="command-section">
-                    <h3>🚨 Resolución Rápida de Problemas</h3>
-                    <div class="troubleshooting-list">
-                        <ul>
-                            <li><strong>Si los alumnos no pueden ingresar a Gnius Space:</strong> Activa XOLO SOS en <a href="https://xolo.gnius.club" target="_blank">xolo.gnius.club</a> para continuar la misión sin interrumpir la clase.</li>
-                            <li><strong>Si el Micro:bit no reconoce el sonido:</strong> Asegúrate de que el micrófono esté activado y que los ejemplos grabados en Create A.I. sean claros y sin ruido de fondo.</li>
-                            <li><strong>Si la extensión Create A.I. no aparece:</strong> Verifica la conexión a internet y asegúrate de haber escrito correctamente el nombre en el buscador de extensiones.</li>
-                            <li><strong>Si hay errores en el código:</strong> Recordar a los estudiantes que XOLO puede ayudar a depurar. Pídeles que copien el error y se lo muestren a XOLO.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <!-- ACTIVIDAD 1: INTRO A LA MISIÓN -->
-            <div class="activity-card" id="activity-1">
-                <div class="activity-header">
-                    <h2>🚀 Actividad 1: Intro a la Misión</h2>
-                    <div class="activity-timer">
-                        <span class="activity-duration">⏱️ 2:00</span>
-                        <button class="timer-start-btn" data-duration="120">Iniciar</button>
-                    </div>
-                </div>
-                <div class="roles-section">
-                    <div class="role-card role-teacher">
-                        <h4>👨‍🏫 Rol del Maestro</h4>
-                        <ul>
-                            <li>Dar la bienvenida con energía.</li>
-                            <li>Pedir a los alumnos que ingresen a Gnius Space.</li>
-                            <li>Proyecta diapositiva 1 con el I Can Statement.</li>
-                            <li>Motiva: "¡Hoy le daremos súper oídos a sus Micro:bits!".</li>
-                        </ul>
-                    </div>
-                    <div class="role-card role-xolo">
-                        <h4>🤖 Rol de XOLO</h4>
-                        <ul>
-                            <li>XOLO ya está listo y conoce a cada estudiante.</li>
-                            <li>Sabe que hoy toca aprender sobre Inteligencia Artificial Auditiva.</li>
-                        </ul>
-                    </div>
-                    <div class="role-card role-student">
-                        <h4>👦 Rol del Alumno</h4>
-                        <ul>
-                            <li>Escucha la misión del día.</li>
-                            <li>Loguearse en Gnius Space.</li>
-                            <li>Preparación para trabajar en parejas.</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="slide-reference">
-                    <h4>📊 Diapositiva 1: I Can Statement</h4>
-                    <div class="slide-content">
-                        <p><strong>🎯 Hoy seré capaz de:</strong></p>
-                        <p class="highlight-text">🤖 A entrenar al Micro:bit para que reconozca tus sonidos y responda con magia.</p>
-                        <p><strong>Aplicación real:</strong> Los asistentes de voz en los celulares y casas usan esta tecnología para reconocer cuando les hablas y cumplir tus órdenes.</p>
-                        <p><strong>Tu aliado:</strong> XOLO ya sabe qué vas a aprender hoy. ¡Solo abre el chat y comienza!</p>
-                    </div>
-                </div>
-            </div>
-            <!-- ACTIVIDAD 2: A.I. GYM -->
-            <div class="activity-card" id="activity-2">
-                <div class="activity-header">
-                    <h2>🧠 Actividad 2: A.I. Gym</h2>
-                    <div class="activity-timer">
-                        <span class="activity-duration">⏱️ 8:00</span>
-                        <button class="timer-start-btn" data-duration="480">Iniciar</button>
-                    </div>
-                </div>
-                <div class="roles-section">
-                    <div class="role-card role-teacher">
-                        <h4>👨‍🏫 Rol del Maestro</h4>
-                        <ul>
-                            <li>Proyecta diapositiva 2.</li>
-                            <li>Indica: "Abran el chat con XOLO y salúdenlo. Él ya sabe qué les va a enseñar hoy."</li>
-                            <li>Circula para asegurar que todos interactúan con XOLO.</li>
-                            <li>Si alguien tiene dudas, recuérdale: "Pregúntale a XOLO, él te puede explicar de otra forma".</li>
-                        </ul>
-                    </div>
-                    <div class="role-card role-xolo">
-                        <h4>🤖 Rol de XOLO</h4>
-                        <p class="xolo-status">✅ XOLO ACTIVO</p>
-                        <ul>
-                            <li>Reconoce al estudiante y sus preferencias de aprendizaje.</li>
-                            <li>Explica cómo el micro:bit detecta patrones de sonido sin entender su significado.</li>
-                            <li>Introduce el concepto de entrenamiento de IA mediante ejemplos claros.</li>
-                            <li>Responde dudas sobre los conceptos.</li>
-                        </ul>
-                    </div>
-                    <div class="role-card role-student">
-                        <h4>👦 Rol del Alumno</h4>
-                        <ul>
-                            <li>Abrir el chat con XOLO y saludarlo.</li>
-                            <li>Aprender a usar Create A.I. para grabar y entrenar sonidos.</li>
-                            <li>Aprender sobre cómo las máquinas reconocen patrones auditivos.</li>
-                            <li>Despejar todas sus dudas preguntando a XOLO.</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="slide-reference">
-                    <h4>📊 Diapositiva 2: A.I. GYM</h4>
-                    <div class="slide-content">
-                        <p><strong>💬 Abre el chat con XOLO y salúdalo:</strong></p>
-                        <div class="prompt-box">
-                            <pre>"¡Hola XOLO! Estoy listo para aprender."</pre>
-                        </div>
-                        <p class="highlight-text" style="margin-top: 1rem;">✨ XOLO ya sabe quién eres y qué tema toca hoy. ¡Solo empieza a conversar!</p>
-                        <p class="highlight-text">🎯 Objetivo: Aprender a usar Create A.I. para reconocer sonidos y entender los patrones.</p>
-                    </div>
-                </div>
-                
-                <div class="optional-script">
-                    <button class="collapsible-button">📖 Ver guion detallado (opcional)</button>
-                    <div class="collapsible-content">
-                        <p class="dialogue assistant">¡Hola a todos! Hoy vamos a convertirnos en entrenadores de IA. Vamos a empezar abriendo el chat con XOLO. Salúdenlo con un fuerte '¡Hola XOLO!'. XOLO ya los conoce y sabe exactamente qué les va a enseñar hoy sobre cómo las máquinas escuchan. No necesitan escribir un prompt especial, solo empiecen a platicar con él. Él les explicará cómo sus Micro:bits pueden aprender a reconocer un aplauso o un silbido. ¡Pregúntenle todo lo que quieran sobre cómo funcionan los asistentes de voz! XOLO ya los conoce y sabe exactamente qué les va a enseñar hoy. No necesitan escribir un prompt especial, solo empiecen a platicar con él.</p>
-                    </div>
-                </div>
-            </div>
-            <!-- ACTIVIDAD 3: BRAIN SPARK -->
-            <div class="activity-card" id="activity-3">
-                <div class="activity-header">
-                    <h2>💡 Actividad 3: Brain Spark</h2>
-                    <div class="activity-timer">
-                        <span class="activity-duration">⏱️ 20:00</span>
-                        <button class="timer-start-btn" data-duration="1200">Iniciar</button>
-                    </div>
-                </div>
-                <div class="roles-section">
-                    <div class="role-card role-teacher">
-                        <h4>👨‍🏫 Rol del Maestro</h4>
-                        <ul>
-                            <li>Proyecta la diapositiva 3.</li>
-                            <li>Indica: "Pidan a XOLO que los ayude a idear un proyecto. Cuando tengan su GCS, pásenlo a bloques en MakeCode, prueben en el simulador y luego con el hardware real".</li>
-                            <li>Entrega por parejas los Micro:bits conforme los alumnos prueben su GCS en el simulador.</li>
-                            <li>Si hay errores, recuerda: "Pregúntenle a XOLO, él los ayuda a depurar".</li>
-                        </ul>
-                    </div>
-                    <div class="role-card role-xolo">
-                        <h4>🤖 Rol de XOLO</h4>
-                        <p class="xolo-status">✅ XOLO ACTIVO</p>
-                        <ul>
-                            <li>Ayuda a desarrollar una idea y un VIBE que aplique el reconocimiento de sonidos.</li>
-                            <li>Entrega el GCS de la idea del genio.</li>
-                            <li>Resuelve errores de sintaxis o lógica.</li>
-                        </ul>
-                    </div>
-                    <div class="role-card role-student">
-                        <h4>👦 Rol del Alumno</h4>
-                        <ul>
-                            <li>Trabajar con XOLO una idea y un VIBE para usar el reconocimiento de voz o sonidos.</li>
-                            <li>Traducir el GCS de XOLO a bloques en MakeCode.</li>
-                            <li>Depurar su programa con XOLO si hay errores.</li>
-                            <li>Conectar el micro:bit a la computadora y probar los sonidos.</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="slide-reference">
-                    <h4>📊 Diapositiva 3: Brain Spark</h4>
-                    <div class="slide-content">
-                        <p><strong>1. 💬 Pide a XOLO que te ayude a crear:</strong></p>
-                        <div class="prompt-box">
-                            <pre>"Ayúdame a idear un proyecto aplicado en MakeCode donde el Micro:bit reconozca 1–2 sonidos y responda con una acción creativa (animación, música o mensaje). Propón una vibe (ej. “micrófono mágico”, “robot DJ mini”). Luego genera el GCS y ayúdame a traducirlo a bloques para implementarlo."</pre>
-                        </div>
-                        <p style="margin-top: 1.5rem;"><strong>2. 🔬 Experimenta y descubre con tu programa:</strong></p>
-                        <ul>
-                            <li>¿El Micro:bit reconoce el sonido cada vez que lo haces?</li>
-                            <li>¿Qué pasa si haces el sonido más bajito o más fuerte de lo que lo grabaste?</li>
-                            <li>¿Funciona igual si hay mucho ruido en el salón comparado con cuando hay silencio?</li>
-                            <li>Si el Micro:bit reconoce tu aplauso pero no sabe qué significa 'felicidad', ¿por qué decimos que reconoce patrones y no que entiende intenciones?</li>
-                            <li>¿Cómo ayuda tener ejemplos claros y variados a que la IA no se confunda entre un aplauso y un golpe en la mesa?</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="optional-script">
-                    <button class="collapsible-button">📖 Ver guion detallado (opcional)</button>
-                    <div class="collapsible-content">
-                        <p class="dialogue assistant">¡Es hora de crear algo asombroso! Ahora que ya saben cómo entrenar a la IA, vamos a pedirle a XOLO que nos ayude a idear un proyecto. Imaginen un 'Robot DJ' que cambia de canción cuando aplauden, o un 'Cofre Mágico' que se abre con un silbido secreto. El flujo es sencillo: ideen con XOLO, elijan un VIBE, obtengan su GCS, pásenlo a bloques en MakeCode y ¡a experimentar! No olviden probar sus proyectos con las preguntas de la pantalla. Si algo no sale a la primera, no se preocupen, pregúntenle a XOLO, él los ayudará a depurar su código. ¡A crear! Si tienen errores o dudas, pregúntenle a XOLO, él los ayudará a depurar.</p>
-                    </div>
-                </div>
-                <div class="challenge-prompt">
-                    <h4>🚀 Prompt de Desafío (para quienes terminen rápido)</h4>
-                    <div class="prompt-box">
-                        <p><strong>Si ya experimentaste con todo, pregunta a XOLO:</strong></p>
-                        <p class="challenge-text">"Ya probé con un sonido básico. ¿Puedes enseñarme cómo hacer que mi Micro:bit haga una secuencia de luces diferente para cada tipo de sonido que reconozca?"</p>
-                    </div>
-                </div>
-            </div>
-            <!-- ACTIVIDAD 4: GNIUS STORM - COMPARTIR -->
-            <div class="activity-card" id="activity-4">
-                <div class="activity-header">
-                    <h2>⚡ Actividad 4: Gnius STORM - Compartir y Reflexionar</h2>
-                    <div class="activity-timer">
-                        <span class="activity-duration">⏱️ 5:00</span>
-                        <button class="timer-start-btn" data-duration="300">Iniciar</button>
-                    </div>
-                </div>
-                <div class="roles-section">
-                    <div class="role-card role-teacher">
-                        <h4>👨‍🏫 Rol del Maestro</h4>
-                        <ul>
-                            <li>Organiza las parejas para compartir.</li>
-                            <li>Gestiona los tiempos: 2 min demo + 2 min reflexión + 1 min cierre.</li>
-                            <li>Facilita retroalimentación constructiva.</li>
-                            <li>Cierra con reflexión sobre aplicaciones reales.</li>
-                        </ul>
-                    </div>
-                    <div class="role-card role-xolo">
-                        <h4>🤖 Rol de XOLO</h4>
-                        <p class="xolo-status">⏸️ XOLO EN ESPERA</p>
-                        <ul>
-                            <li>Disponible solo si hay dudas finales urgentes.</li>
-                        </ul>
-                    </div>
-                    <div class="role-card role-student">
-                        <h4>👦 Rol del Alumno</h4>
-                        <ul>
-                            <li>Demuestra su programa funcionando a otra pareja.</li>
-                            <li>Explica qué sonidos reconoce bien su Micro:bit.</li>
-                            <li>Comparte un descubrimiento interesante.</li>
-                            <li>Da retroalimentación positiva al compañero.</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="slide-reference">
-                    <h4>📊 Diapositiva 4: Think-Pair-Share</h4>
-                    <div class="slide-content tps-structure">
-                        <div class="tps-phase">
-                            <h4>🤔 THINK (30 seg)</h4>
-                            <p>Reflexión individual: ¿Qué sonidos reconoció mejor tu Micro:bit? ¿Qué te sorprendió del entrenamiento?</p>
-                        </div>
-                        <div class="tps-phase">
-                            <h4>👥 PAIR (2 min)</h4>
-                            <p>Con otra pareja: Demuestren su programa y expliquen su experiencia</p>
-                            <p class="highlight-text">Frase guía: "Mi Micro:bit reconoce aplausos y silbidos. Me sorprendió que a veces se confunde si hay mucho ruido."</p>
-                        </div>
-                        <div class="tps-phase">
-                            <h4>💬 SHARE (2 min)</h4>
-                            <p>Retroalimentación mutua y cierre del maestro.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- ACTIVIDAD 5: ENTREGA DE EVIDENCIAS -->
-            <div class="activity-card" id="activity-5">
-                <div class="activity-header">
-                    <h2>✅ Actividad 5: Entrega de Evidencias</h2>
-                    <div class="activity-timer">
-                        <span class="activity-duration">⏱️ 5:00</span>
-                        <button class="timer-start-btn" data-duration="300">Iniciar</button>
-                    </div>
-                </div>
-                <div class="roles-section">
-                    <div class="role-card role-teacher">
-                        <h4>👨‍🏫 Rol del Maestro</h4>
-                        <ul>
-                            <li>Proyecta diapositiva 5 con las instrucciones.</li>
-                            <li>Guía a los estudiantes para tomar las capturas.</li>
-                            <li>Asegura que todos suban sus evidencias a Gnius Space.</li>
-                            <li>Felicita al grupo por completar la misión.</li>
-                        </ul>
-                    </div>
-                    <div class="role-card role-xolo">
-                        <h4>🤖 Rol de XOLO</h4>
-                        <p class="xolo-status">⭕ XOLO FINALIZADO</p>
-                        <ul>
-                            <li>La interacción con XOLO ha terminado para esta misión.</li>
-                        </ul>
-                    </div>
-                    <div class="role-card role-student">
-                        <h4>👦 Rol del Alumno</h4>
-                        <ul>
-                            <li>Tomar screenshot de su código en MakeCode.</li>
-                            <li>Tomar screenshot de su conversación con XOLO.</li>
-                            <li>Subir ambas evidencias a Gnius Space.</li>
-                            <li>Dar click en "Finalizar Misión".</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="slide-reference">
-                    <h4>📊 Diapositiva 5: ¡Misión Cumplida!</h4>
-                    <div class="slide-content">
-                        <p><strong>📸 Para terminar, sube tus evidencias a Gnius Space:</strong></p>
-                        <ol>
-                            <li>Una captura de pantalla de tu programa final en <strong>MakeCode</strong>.</li>
-                            <li>Una captura de pantalla de tu conversación con <strong>XOLO</strong> donde te dio tu GCS.</li>
-                        </ol>
-                        <p class="highlight-text" style="margin-top: 1rem;">¡No olvides dar click en el botón <strong>"Finalizar Misión"</strong> cuando termines!</p>
-                    </div>
-                </div>
-            </div>
-        </main>
+
+        <!-- ZONA DECISIÓN -->
+        <div class="decision-zone" id="decision-buttons">
+            <button class="stamp-btn stamp-accept" onclick="makeDecision('original')">
+                ✅<br>ACEPTAR<br>(Original)
+            </button>
+            <button class="stamp-btn stamp-auth" onclick="makeDecision('authorized')">
+                🤝<br>ACEPTAR<br>(Autorizada)
+            </button>
+            <button class="stamp-btn stamp-reject" onclick="makeDecision('plagiarism')">
+                🚫<br>RECHAZAR<br>(Plagio)
+            </button>
+        </div>
     </div>
- <script src="script.js"></script>
+
+    <!-- PANTALLA DE FEEDBACK -->
+    <div id="feedback-modal" class="feedback-overlay">
+        <div class="director-msg">
+            <div class="director-face">🧐</div>
+            <h2 id="feedback-title">Resultado</h2>
+            <p id="feedback-text">Detalles del análisis...</p>
+            <button class="next-btn" onclick="nextCase()">Siguiente Obra ➡</button>
+        </div>
+    </div>
+
+    <script>
+        /* --- DATOS DEL JUEGO --- */
+        const cases = [
+            {
+                id: 1,
+                title: "Noche en Marte",
+                visualClass: "art-mars",
+                content: `<div>🪐</div><div style="font-size: 3rem; margin-top: -20px;">🌀 ✨</div>`,
+                type: "original",
+                tools: {
+                    compare: "SIMILITUD: 40%. Estilo inspirado en Van Gogh, pero temática espacial inédita.",
+                    signature: "FIRMA: Auténtica. Coincide con el artista emergente 'Elon G'.",
+                    permission: "LICENCIA: N/A. Obra original registrada."
+                },
+                explanation: "Correcto. La inspiración no es plagio. Transformar un estilo en un tema nuevo es originalidad."
+            },
+            {
+                id: 2,
+                title: "Mona Falsa",
+                visualClass: "art-mona",
+                content: `<div>👩</div>`,
+                type: "plagiarism",
+                tools: {
+                    compare: "SIMILITUD: 98%. Composición idéntica a Da Vinci. Solo cambia el color de fondo.",
+                    signature: "FIRMA: 'Leo D.', trazo vacilante. Posible falsificación.",
+                    permission: "LICENCIA: Ninguna. No es dominio público en este contexto moderno."
+                },
+                explanation: "¡Buen ojo! Es una copia directa intentando pasar por nueva. Plagio descarado."
+            },
+            {
+                id: 3,
+                title: "Astro-Dino",
+                visualClass: "art-dino",
+                content: `<div>👨‍🚀 🦖</div>`,
+                type: "plagiarism",
+                tools: {
+                    compare: "SIMILITUD: Detectado collage. El astronauta es del juego 'Among Space', el dino es clip-art.",
+                    signature: "FIRMA: Ilegible / Desconocida.",
+                    permission: "LICENCIA: NO ENCONTRADA. Uso de assets sin atribución."
+                },
+                explanation: "Rechazado. Un collage de imágenes con derechos de autor sin permiso es plagio."
+            },
+            {
+                id: 4,
+                title: "Robot Triste",
+                visualClass: "art-robot",
+                content: `<div>🤖</div><div style="font-size: 2rem;">🌧️</div>`,
+                type: "original",
+                tools: {
+                    compare: "SIMILITUD: 20%. Recuerda a portadas de sci-fi 80s, pero la composición es única.",
+                    signature: "FIRMA: 'A.I. Soul'. Artista verificado.",
+                    permission: "LICENCIA: Copyright estándar."
+                },
+                explanation: "Aceptado. Una obra emotiva y única. Referencias sutiles no anulan la originalidad."
+            },
+            {
+                id: 5,
+                title: "El Grito (Edición Pop)",
+                visualClass: "art-scream",
+                content: `<div>😱</div>`,
+                type: "authorized",
+                tools: {
+                    compare: "SIMILITUD: 100% (Forma). 0% (Color). Derivado directo.",
+                    signature: "FIRMA: Taller Munch & Co.",
+                    permission: "LICENCIA: OFICIAL. Derechos de reproducción concedidos por el museo."
+                },
+                explanation: "Correcto. Es una copia, pero tiene permiso legal explícito. Es una reproducción autorizada."
+            }
+        ];
+
+        /* --- ESTADO DEL JUEGO --- */
+        let currentCaseIndex = 0;
+        let toolsUsedCount = 0;
+        let isProcessing = false;
+        let score = 0;
+
+        /* --- ELEMENTOS DOM --- */
+        const canvasContent = document.getElementById('canvas-content');
+        const artTitle = document.getElementById('art-title');
+        const reportPanel = document.getElementById('report-panel');
+        const stampResult = document.getElementById('stamp-result');
+        const feedbackModal = document.getElementById('feedback-modal');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackText = document.getElementById('feedback-text');
+        const scoreDisplay = document.getElementById('score-display');
+        const decisionButtons = document.getElementById('decision-buttons');
+        const toolButtons = document.getElementById('tool-buttons');
+
+        /* --- SISTEMA DE AUDIO (Web Audio API) --- */
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function playScan() {
+            playTone(800, 'sine', 0.1);
+            setTimeout(() => playTone(1200, 'square', 0.1), 100);
+        }
+
+        function playStamp() {
+            playTone(100, 'sawtooth', 0.3, 0.5);
+            playTone(50, 'square', 0.3, 0.5);
+        }
+
+        function playWin() {
+            playTone(440, 'triangle', 0.5); 
+            setTimeout(() => playTone(554, 'triangle', 0.5), 200); 
+            setTimeout(() => playTone(659, 'triangle', 0.8), 400); 
+        }
+
+        function playAlarm() {
+            playTone(150, 'sawtooth', 0.4);
+            setTimeout(() => playTone(100, 'sawtooth', 0.4), 200);
+        }
+
+        /* --- LÓGICA DEL JUEGO --- */
+
+        function initGame() {
+            // Reset de estado
+            currentCaseIndex = 0;
+            score = 0;
+            updateScoreUI();
+            
+            // Mostrar UI necesaria
+            decisionButtons.style.display = 'flex';
+            toolButtons.style.display = 'block';
+            
+            loadCase(0);
+        }
+
+        function restartGame() {
+            playWin(); // Pequeño sonido de reinicio
+            initGame();
+        }
+
+        function loadCase(index) {
+            if (index >= cases.length) {
+                endGame();
+                return;
+            }
+
+            const data = cases[index];
+            
+            // Reset UI
+            canvasContent.className = `canvas ${data.visualClass}`;
+            canvasContent.innerHTML = data.content;
+            artTitle.innerText = `Caso #${index + 1}: "${data.title}"`;
+            reportPanel.innerHTML = `<p><strong>Análisis de Obra: ${data.title}</strong></p><hr><p>Esperando entrada...</p>`;
+            stampResult.className = "stamp-overlay"; 
+            stampResult.style.opacity = 0;
+            
+            toolsUsedCount = 0;
+            isProcessing = false;
+        }
+
+        function useTool(toolName) {
+            if (isProcessing) return;
+            playScan();
+            
+            const data = cases[currentCaseIndex];
+            const resultText = data.tools[toolName];
+            
+            const newP = document.createElement('p');
+            newP.style.borderLeft = "3px solid #d32f2f";
+            newP.style.paddingLeft = "10px";
+            newP.innerText = `>> ${resultText}`;
+            
+            reportPanel.appendChild(newP);
+            reportPanel.scrollTop = reportPanel.scrollHeight;
+            
+            toolsUsedCount++;
+        }
+
+        function makeDecision(decisionType) {
+            if (isProcessing) return;
+
+            if (toolsUsedCount === 0) {
+                alert("¡Curador! No puede juzgar una obra sin usar al menos una herramienta de análisis.");
+                return;
+            }
+
+            isProcessing = true;
+            const data = cases[currentCaseIndex];
+            const isCorrect = (decisionType === data.type);
+
+            // Audio & Visual Sello
+            playStamp();
+            
+            let stampText = "";
+            let stampColor = "";
+            
+            if (decisionType === 'original') { stampText = "ORIGINAL"; stampColor = "#2e7d32"; }
+            else if (decisionType === 'authorized') { stampText = "AUTORIZADO"; stampColor = "#1565c0"; }
+            else { stampText = "PLAGIO"; stampColor = "#c62828"; }
+
+            stampResult.innerText = stampText;
+            stampResult.style.color = stampColor;
+            stampResult.style.borderColor = stampColor;
+            stampResult.classList.add('stamp-anim');
+
+            if (isCorrect) {
+                score += 20;
+                updateScoreUI();
+            }
+
+            setTimeout(() => {
+                showFeedback(isCorrect, data);
+            }, 1000);
+        }
+
+        function updateScoreUI() {
+            scoreDisplay.innerText = score;
+        }
+
+        function showFeedback(isCorrect, data) {
+            feedbackModal.style.display = 'flex';
+            
+            if (isCorrect) {
+                playWin();
+                feedbackTitle.innerText = "¡EXCELENTE TRABAJO!";
+                feedbackTitle.style.color = "#4caf50";
+                feedbackText.innerHTML = `<strong>Has acertado (+20 Pts).</strong><br><br>${data.explanation}`;
+            } else {
+                playAlarm();
+                feedbackTitle.innerText = "ERROR DE JUICIO";
+                feedbackTitle.style.color = "#f44336";
+                feedbackText.innerHTML = `<strong>La Directora está decepcionada.</strong><br><br>Era un caso de tipo: <em>${data.type.toUpperCase()}</em>.<br>${data.explanation}`;
+            }
+        }
+
+        function nextCase() {
+            feedbackModal.style.display = 'none';
+            currentCaseIndex++;
+            loadCase(currentCaseIndex);
+        }
+
+        function endGame() {
+            // Determinar Rango
+            let rank = "";
+            let emoji = "";
+            
+            if (score === 100) { rank = "MAESTRO CURADOR"; emoji = "🏛️✨"; }
+            else if (score >= 60) { rank = "CURADOR JUNIOR"; emoji = "📜"; }
+            else if (score > 0) { rank = "APRENDIZ DESPISTADO"; emoji = "🧹"; }
+            else { rank = "PELIGRO PÚBLICO"; emoji = "☠️"; }
+
+            // Cambiar UI
+            canvasContent.innerHTML = `<div style='font-size:4rem'>${emoji}</div><div style='font-size:2rem'>${score}/100</div>`;
+            canvasContent.className = "canvas art-final";
+            artTitle.innerText = "TURNO TERMINADO";
+            
+            // Ocultar botones de juego y mostrar panel final
+            decisionButtons.style.display = 'none';
+            toolButtons.style.display = 'none';
+
+            reportPanel.innerHTML = `
+                <h3>¡INFORME FINAL!</h3>
+                <p>Curador, su turno ha terminado.</p>
+                <p><strong>Puntuación Final:</strong> ${score}/100</p>
+                <p><strong>Rango Obtenido:</strong><br><span style="color:#d32f2f; font-size:1.2rem">${rank}</span></p>
+                <hr>
+                <button class="restart-btn" onclick="restartGame()">🔄 VOLVER A JUGAR</button>
+            `;
+        }
+
+        // Iniciar
+        initGame();
+
+    </script>
 </body>
-</html></html>
+</html>
